@@ -14,8 +14,8 @@ package entity
  *  @property -playStack2-- Zweiter Ablagestapel für gespielte Karten.
   */
 
-data class UpAndDownGame(val player1: Player, val player2: Player) {
-    val playStack1: MutableList<Card> = mutableListOf()
+ data class UpAndDownGame(val player1: Player, val player2: Player) {
+    var playStack1: MutableList<Card> = mutableListOf()
     val playStack2: MutableList<Card> = mutableListOf()
     var currentPlayer: Int = 0
     var passCounter: Int = 0

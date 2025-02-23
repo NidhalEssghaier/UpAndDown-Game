@@ -14,7 +14,7 @@ package entity
 class Player (var name: String){
     var drawStack : MutableList<Card> = mutableListOf()
     var hand : MutableList<Card> = mutableListOf()
-
+    val hasDrawnCard: Boolean = false
     override fun toString(): String =
         "$name: D$drawStack H$hand"
 
