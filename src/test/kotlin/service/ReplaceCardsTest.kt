@@ -10,7 +10,7 @@ import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import kotlin.test.assertEquals
 
-class PlayerActionServiceTest {
+class ReplaceCardsTest {
 
     private lateinit var rootService: RootService
     private lateinit var gameService: GameService
