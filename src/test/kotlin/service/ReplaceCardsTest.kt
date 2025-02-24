@@ -1,7 +1,7 @@
 package service
 
 import entity.*
-import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
@@ -16,6 +16,7 @@ class ReplaceCardsTest {
     private lateinit var rootService: RootService
     private lateinit var playerActionService: PlayerActionService
     private lateinit var game: UpAndDownGame
+    private lateinit var refreshable: TestRefreshable
 
     /**
      * Initializes game and services before each test.
@@ -27,6 +28,8 @@ class ReplaceCardsTest {
         game = UpAndDownGame(Player("player1"), Player("player2"))
         rootService.currentGame = game
         game.currentPlayer = 1
+        refreshable = TestRefreshable()
+        rootService.addRefreshable(refreshable)
     }
 
     /**
@@ -35,15 +38,16 @@ class ReplaceCardsTest {
     @Test
     fun testReplaceCardsSuccessfully() {
         val card :Card = (Card(CardSuit.SPADES, CardValue.SEVEN))
-        for( i in 1..8 ){game.player1.hand.add(card)}
+        repeat(8){game.player1.hand.add(card)}
         game.player1.drawStack.add(0,card)
         assertDoesNotThrow {
             playerActionService.replaceCards()
         }
-
         assertEquals(5, game.player1.hand.size)
         assertEquals(4 , game.player1.drawStack.size)
         assertEquals(0 , rootService.currentGame!!.passCounter)
+        assertTrue(refreshable.refreshAfterReplaceCardsCalled)
+        refreshable.reset()
     }
 
     /**
@@ -52,12 +56,14 @@ class ReplaceCardsTest {
     @Test
     fun testReplaceCardsWhenHandSizeLessThan8() {
         val card :Card = (Card(CardSuit.SPADES, CardValue.SEVEN))
-        for( i in 1..5 ){game.player1.hand.add(card)}
+        repeat(5){game.player1.hand.add(card)}
         game.player1.drawStack.add(0,card)
         val exception = assertThrows<IllegalStateException> {
             playerActionService.replaceCards()
         }
         assertEquals("you have less than 8 cards , you cant replace you cards", exception.message)
+        assertFalse(refreshable.refreshAfterReplaceCardsCalled)
+        refreshable.reset()
     }
 
     /**
@@ -66,11 +72,13 @@ class ReplaceCardsTest {
     @Test
     fun testReplaceCardsWhenDrawStackIsEmpty() {
         val card :Card = (Card(CardSuit.SPADES, CardValue.SEVEN))
-        for( i in 1..8 ){game.player1.hand.add(card)}
+        repeat(8){game.player1.hand.add(card)}
         val exception = assertThrows<IllegalStateException> {
             playerActionService.replaceCards()
         }
         assertEquals("you draw Deck is Empty , you cant replace you cards", exception.message)
+        assertFalse(refreshable.refreshAfterReplaceCardsCalled)
+        refreshable.reset()
     }
 
     /**
@@ -81,5 +89,7 @@ class ReplaceCardsTest {
         rootService.currentGame = null
         assertThrows<IllegalStateException> { playerActionService.replaceCards() }
         assertNull(rootService.currentGame)
+        assertFalse(refreshable.refreshAfterReplaceCardsCalled)
+        refreshable.reset()
     }
 }

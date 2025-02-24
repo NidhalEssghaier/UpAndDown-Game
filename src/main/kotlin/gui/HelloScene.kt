@@ -5,6 +5,7 @@ import tools.aqua.bgw.core.BoardGameScene
 import tools.aqua.bgw.util.Font
 import tools.aqua.bgw.visual.ColorVisual
 
+/** gui Hello scene**/
 class HelloScene : BoardGameScene(500, 500) {
 
     private val helloLabel = Label(
@@ -16,6 +17,7 @@ class HelloScene : BoardGameScene(500, 500) {
         font = Font(size = 20)
     )
 
+    /** gui Hello scene**/
     init {
         background = ColorVisual(108, 168, 59)
         addComponents(helloLabel)

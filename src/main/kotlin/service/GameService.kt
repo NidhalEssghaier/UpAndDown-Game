@@ -1,5 +1,4 @@
 package service
-
 import entity.*
 
 /**
@@ -31,8 +30,10 @@ class GameService(private val rootService: RootService) : AbstractRefreshingServ
             playStack2.add(allCards.removeAt(0))
             passCounter = 0
         }
-
         rootService.currentGame = game
+
+
+        onAllRefreshables {refreshAfterStartNewGame()}
     }
 
     /**
@@ -50,6 +51,7 @@ class GameService(private val rootService: RootService) : AbstractRefreshingServ
         val waitingPlayer = if (game.currentPlayer == 1) game.player2 else game.player1
 
         if (activePlayer.drawStack.isEmpty() && activePlayer.hand.isEmpty()) {
+            onAllRefreshables {  refreshAfterEndGame("${waitingPlayer.name} wins the game!")}
             rootService.currentGame = null
             return
         }
@@ -62,14 +64,14 @@ class GameService(private val rootService: RootService) : AbstractRefreshingServ
             onAllRefreshables {
                 when {
                     (activePlayerHandCardsNumber < waitingPlayerHandCardsNumber) ->
-                        println("${activePlayer.name} wins the game!")
-                    //refreshAfterEndGame("${activePlayer.name} wins the game!")
+                        //println("${activePlayer.name} wins the game!")
+                      refreshAfterEndGame("${activePlayer.name} wins the game!")
                     (activePlayerHandCardsNumber > waitingPlayerHandCardsNumber) ->
-                        // refreshAfterEndGame("${waitingPlayer.name} wins the game!")
-                        println("${waitingPlayer.name} wins the game!")
+                         refreshAfterEndGame("${waitingPlayer.name} wins the game!")
+                        //println("${waitingPlayer.name} wins the game!")
                     else ->
-                        //refreshAfterEndGame("Game ended with a Draw, you both won the Game!")
-                        println("Game ended with a Draw, you both won the Game!")
+                        refreshAfterEndGame("Game ended with a Draw, you both won the Game!")
+                        //println("Game ended with a Draw, you both won the Game!")
 
                 }
             }
@@ -78,8 +80,9 @@ class GameService(private val rootService: RootService) : AbstractRefreshingServ
 
         }
 
-
         game.currentPlayer = if (game.currentPlayer == 1) 2 else 1
+        val nextPlayer :Player = if (game.currentPlayer == 1) game.player2 else game.player1
+        onAllRefreshables{(refreshAfterEndTurn("${nextPlayer.name} wins the game!"))}
     }
 
     /**
@@ -122,7 +125,36 @@ class GameService(private val rootService: RootService) : AbstractRefreshingServ
         val game = rootService.currentGame ?: throw IllegalStateException("No game currently running.")
         return game.player1.drawStack.isEmpty() && game.player1.hand.isEmpty() &&
                 game.player2.drawStack.isEmpty() && game.player2.hand.isEmpty() &&
-                game.playStack1.isEmpty() && game.playStack2.isEmpty() &&
-                !game.player1.hasDrawnCard && !game.player2.hasDrawnCard
+                game.playStack1.isEmpty() && game.playStack2.isEmpty()
     }
+
+    /**
+    * updates the Application scene when for next players turn
+    **/
+    fun startTurn() {
+        onAllRefreshables { refreshAfterStartTurn() }
+    }
+
+    /**
+     *  exit and returns to main menu while a game is running
+     **/
+    fun cancelGame() {
+        rootService.currentGame = null
+        onAllRefreshables { refreshAfterCancelGame() }
+    }
+
+    /**
+    * Exits UpAndDownGame application
+     * */
+    fun exitGame() {
+        onAllRefreshables { refreshAfterExitGame() }
+    }
+    /**
+    *  returns to main menu during a running game
+    * */
+    fun exitToMainMenu() {
+        onAllRefreshables { refreshAfterReturnToMenu() }
+    }
+
+
 }

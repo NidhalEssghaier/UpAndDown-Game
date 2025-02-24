@@ -14,6 +14,7 @@ class StartNewGameTest {
 
     private lateinit var rootService: RootService
     private lateinit var gameService: GameService
+    private lateinit var refreshable: TestRefreshable
 
     /**
      * initialize [RootService] and [GameService] before each test.
@@ -21,7 +22,10 @@ class StartNewGameTest {
     @BeforeEach
     fun setUp() {
         rootService = RootService()
-        gameService = GameService(rootService)
+        gameService = rootService.gameService // what is the difference between this and "GameService(rootService)" ???
+        // , when I do "GameService(rootService)" assertTrue(refreshable.refreshAfter...) fails !
+        refreshable = TestRefreshable()
+        rootService.addRefreshable(refreshable)
     }
 
     /**
@@ -29,6 +33,7 @@ class StartNewGameTest {
      */
     @Test
     fun testStartNewGame() {
+
         val name1 = "Player1"
         val name2 = "Player2"
 
@@ -45,5 +50,47 @@ class StartNewGameTest {
         assertTrue(game.currentPlayer in listOf(1, 2))
         assertEquals(1, game.playStack1.size)
         assertEquals(1, game.playStack2.size)
+        assertTrue(refreshable.refreshAfterStartNewGameCalled)
+        refreshable.reset()
+
     }
+
+    /**
+    * test if  application refreshes scene when players turn starts
+    *  */
+    @Test
+    fun testStartTurn() {
+        gameService.startTurn()
+        assertTrue(refreshable.refreshAfterStartTurnCalled)
+        refreshable.reset()
+    }
+    /**
+     * test if  application refreshes scene for return to game menu
+     *  */
+    @Test
+    fun testExitToMainMenu() {
+        gameService.exitToMainMenu()
+        assertTrue(refreshable.refreshAfterReturnToMenuCalled)
+        refreshable.reset()
+    }
+    /**
+     * test if  application refreshes scene for return to game menu
+     *  */
+    @Test
+    fun testCancelGame() {
+        gameService.cancelGame()
+        kotlin.test.assertNull(rootService.currentGame)
+        assertTrue(refreshable.refreshAfterCancelGameCalled)
+        refreshable.reset()
+    }
+    /**
+     * test if  application refreshes scene after exiting game
+     *  */
+    @Test
+    fun testExitGame() {
+        gameService.exitGame()
+        assertTrue(refreshable.refreshAfterExitGameCalled)
+        refreshable.reset()
+    }
+
 }

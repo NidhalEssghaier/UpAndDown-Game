@@ -1,6 +1,5 @@
 package gui
 import service.AbstractRefreshingService
-import tools.aqua.bgw.util.Stack
 import entity.Card
 
 
@@ -51,7 +50,7 @@ interface Refreshable {
     /**
      * changes the scene after player´s turn ends
      */
-    fun refreshAfterEndTurn() {}
+    fun refreshAfterEndTurn(nextPlayerSceneMessage: String) {}
 
     /**
      * changes the scene after a card has been played
@@ -60,7 +59,7 @@ interface Refreshable {
      */
     fun refreshAfterPlayCard(
         card: Card,
-        playStack: Stack<Card>,
+        playStack: MutableList<Card>,
     ) {}
 
     /**

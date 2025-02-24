@@ -11,13 +11,12 @@ import kotlin.test.assertEquals
  * - The correct initialization of a player.
  * - The correct representation of the player's state.
  */
-
 class PlayerTest {
 
     private val player = Player("player1")
 
 
-
+    /** test richtige name Zuweisung **/
     @Test
     fun `player tester` () {
 

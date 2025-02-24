@@ -13,6 +13,7 @@ class EndTurnTest {
 
     private lateinit var rootService: RootService
     private lateinit var gameService: GameService
+    private lateinit var refreshable: TestRefreshable
 
     /**
      *  initialize [RootService] and [GameService] before each Test
@@ -20,7 +21,9 @@ class EndTurnTest {
     @BeforeEach
     fun setUp() {
         rootService = RootService()
-        gameService = GameService(rootService)
+        gameService = rootService.gameService
+        refreshable = TestRefreshable()
+        rootService.addRefreshable(refreshable)
     }
 
     /**
@@ -39,6 +42,8 @@ class EndTurnTest {
         gameService.endTurn()
 
         assertEquals(2, game.currentPlayer) { "The active player should now be Player 2." }
+        assertTrue(refreshable.refreshAfterEndTurnCalled)
+        refreshable.reset()
     }
 
     /**
@@ -65,6 +70,8 @@ class EndTurnTest {
         }
 
         assertNull(rootService.currentGame) { "The game should be over after this turn." }
+        assertTrue(refreshable.refreshAfterEndGameCalled)
+        refreshable.reset()
     }
 
     /**
@@ -94,7 +101,8 @@ class EndTurnTest {
         assertDoesNotThrow {
             gameService.endTurn()
         }
-
         assertNull(rootService.currentGame) { "The game should be over after this turn." }
+        assertTrue(refreshable.refreshAfterEndGameCalled)
+        refreshable.reset()
     }
 }

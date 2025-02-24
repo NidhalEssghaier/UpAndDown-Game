@@ -10,12 +10,17 @@ import org.junit.jupiter.api.Assertions.assertNull
 import kotlin.test.assertFails
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
+
+/**
+ * DrawCard Test with different scenarios
+ */
 class DrawCardTest {
 
     private lateinit var rootService: RootService
     private lateinit var gameService: GameService
     private lateinit var playerActionService: PlayerActionService
     private lateinit var game: UpAndDownGame
+    private lateinit var refreshable: TestRefreshable
 
 
     /**
@@ -26,11 +31,13 @@ class DrawCardTest {
     @BeforeEach
     fun setUp() {
         rootService = RootService()
-        gameService = GameService(rootService)
+        gameService = rootService.gameService
         playerActionService = rootService.playerActionService
         game = UpAndDownGame(Player("player1"), Player("player2"))
         game.currentPlayer = 1
         rootService.currentGame = game
+        refreshable = TestRefreshable()
+        rootService.addRefreshable(refreshable)
     }
 
     /**
@@ -51,6 +58,8 @@ class DrawCardTest {
         assertEquals(0, game.passCounter)
         assertTrue(game.player1.hand.contains(cardToDraw))
         assertFalse(game.player1.drawStack.contains(cardToDraw))
+        Assertions.assertTrue(refreshable.refreshAfterDrawCardCalled)
+        refreshable.reset()
     }
 
     /**
@@ -61,6 +70,8 @@ class DrawCardTest {
         val exception = assertThrows<IllegalStateException> { playerActionService.drawCard() }
         assertEquals("you dont have any cards left to draw", exception.message)
         assertFails { playerActionService.drawCard() }
+        assertFalse(refreshable.refreshAfterDrawCardCalled)
+        refreshable.reset()
     }
 
     /**
@@ -70,7 +81,7 @@ class DrawCardTest {
     fun testInvalidDrawDeckAction() {
         val card: Card = (Card(CardSuit.SPADES, CardValue.SEVEN))
         game.player1.drawStack.add(0, card)
-        for (i in 1..10) {
+        repeat(10) {
             game.player1.hand.add(card)
         }
         val exception = assertThrows<IllegalStateException> { playerActionService.drawCard() }
@@ -79,6 +90,8 @@ class DrawCardTest {
             exception.message
         )
         assertFails { playerActionService.drawCard() }
+        assertFalse(refreshable.refreshAfterDrawCardCalled)
+        refreshable.reset()
     }
 
     /**
@@ -89,5 +102,7 @@ class DrawCardTest {
         rootService.currentGame = null
         assertThrows<IllegalStateException> { playerActionService.drawCard() }
         assertNull(rootService.currentGame)
+        assertFalse(refreshable.refreshAfterDrawCardCalled)
+        refreshable.reset()
     }
 }

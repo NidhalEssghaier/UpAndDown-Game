@@ -23,8 +23,8 @@ class PlayerActionService(private val rootService: RootService) : AbstractRefres
         val drawnCards: Card = currentPlayer.drawStack.removeAt(0)
         currentPlayer.hand.add(drawnCards)
         game.passCounter = 0
-        //onAllRefreshables { refreshAfterDrawCard() }
-        //rootService.gameService.endTurn()
+        onAllRefreshables { refreshAfterDrawCard(drawnCards) }
+        rootService.gameService.endTurn()
     }
 
     /**
@@ -40,15 +40,17 @@ class PlayerActionService(private val rootService: RootService) : AbstractRefres
         checkNotNull(game)
         require(game.currentPlayer in 1..2){"for debugging : current player must be 1 or 2"}
         val currentPlayer: Player = if (game.currentPlayer == 1) game.player1 else game.player2
-        require(currentPlayer.hand.contains(card)) { "you cant play this Card  ! , please choose a Card from you hand Deck" }
+        require(currentPlayer.hand.contains(card)) {
+        "you cant play this Card  ! , please choose a Card from you hand Deck"
+                                                   }
         if (!isValidMove(card, playStack)) {
             throw IllegalArgumentException("this is not a valid move!")
         }
         playStack.add(0, card)
         currentPlayer.hand.remove(card)
         game.passCounter = 0
-        //onAllRefreshables { refreshAfterPlayCard }
-        // rootService.gameService.endTurn()
+        onAllRefreshables { refreshAfterPlayCard(card,playStack) }
+        rootService.gameService.endTurn()
     }
 
     /**
@@ -73,9 +75,8 @@ class PlayerActionService(private val rootService: RootService) : AbstractRefres
         for (card in cardsToDraw) {
             currentPlayer.drawStack.remove(card)
         }
-
-        //onAllRefreshables { refreshAfterReplaceCards() }
-        //rootService.gameService.endTurn()
+        onAllRefreshables { refreshAfterReplaceCards() }
+        rootService.gameService.endTurn()
     }
 
     /**

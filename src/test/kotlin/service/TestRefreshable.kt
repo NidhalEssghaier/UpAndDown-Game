@@ -1,7 +1,6 @@
 package service
 
 import gui.Refreshable
-import tools.aqua.bgw.util.Stack
 import entity.Card
 
 /**
@@ -10,7 +9,7 @@ import entity.Card
  */
 class TestRefreshable: Refreshable {
 
-    private var refreshAfterStartNewGameCalled: Boolean = false
+    var refreshAfterStartNewGameCalled: Boolean = false
         private set
 
     var refreshAfterPlayCardCalled: Boolean = false
@@ -79,7 +78,7 @@ class TestRefreshable: Refreshable {
         refreshAfterStartTurnCalled = true
     }
 
-    override fun refreshAfterEndTurn() {
+    override fun refreshAfterEndTurn(nextPlayerSceneMessage: String) {
         refreshAfterEndTurnCalled = true
     }
 
@@ -88,7 +87,7 @@ class TestRefreshable: Refreshable {
     }
     override fun refreshAfterPlayCard(
         card: Card,
-        playStack: Stack<Card>,
+        playStack: MutableList<Card>,
     ) {
         refreshAfterPlayCardCalled = true
     }

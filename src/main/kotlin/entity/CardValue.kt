@@ -47,7 +47,9 @@ enum class CardValue {
             ACE -> "A"
         }
 
-
+    /**
+     * A set of values for a reduced set of 4x8=32 cards (starting with the 7)
+     */
     companion object {
 
         /**
@@ -58,8 +60,5 @@ enum class CardValue {
         }
 
     }
-
-
-
-
 }
+
