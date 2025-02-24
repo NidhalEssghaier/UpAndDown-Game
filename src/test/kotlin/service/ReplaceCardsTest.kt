@@ -1,89 +1,85 @@
 package service
 
-import entity.Card
-import entity.CardSuit
-import entity.CardValue
-import entity.Player
+import entity.*
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import kotlin.test.assertEquals
 
+/**
+ * Test class for testing replace Card functionality
+ */
 class ReplaceCardsTest {
 
     private lateinit var rootService: RootService
-    private lateinit var gameService: GameService
     private lateinit var playerActionService: PlayerActionService
+    private lateinit var game: UpAndDownGame
 
+    /**
+     * Initializes game and services before each test.
+     */
     @BeforeEach
     fun setUp() {
         rootService = RootService()
-        gameService = GameService(rootService)
-        playerActionService = PlayerActionService(rootService)
-
-        gameService.startNewGame("player1", "player2")
-
-        val player1 = rootService.currentGame!!.player1
-        val player2 = rootService.currentGame!!.player2
-
-        player1.hand.clear()
-
-        player1.hand.addAll(listOf(
-            Card(CardSuit.HEARTS, CardValue.ACE),
-            Card(CardSuit.HEARTS, CardValue.TWO),
-            Card(CardSuit.HEARTS, CardValue.THREE),
-            Card(CardSuit.HEARTS, CardValue.FOUR),
-            Card(CardSuit.HEARTS, CardValue.FIVE),
-            Card(CardSuit.DIAMONDS, CardValue.SIX),
-            Card(CardSuit.CLUBS, CardValue.SEVEN),
-            Card(CardSuit.SPADES, CardValue.EIGHT)
-        ))
-
-        player1.drawStack.clear()
-        player1.drawStack.addAll(listOf(
-            Card(CardSuit.DIAMONDS, CardValue.NINE),
-            Card(CardSuit.DIAMONDS, CardValue.TEN)
-        ))
-
-        player2.hand.clear()
-
-        player2.hand.addAll(listOf(
-            Card(CardSuit.HEARTS, CardValue.ACE),
-            Card(CardSuit.HEARTS, CardValue.TWO),
-
-        ))
-
-        player2.drawStack.clear()
-        player2.drawStack.addAll(listOf(
-            Card(CardSuit.DIAMONDS, CardValue.NINE),
-            Card(CardSuit.DIAMONDS, CardValue.TEN)
-        ))
-
-
+        playerActionService = rootService.playerActionService
+        game = UpAndDownGame(Player("player1"), Player("player2"))
+        rootService.currentGame = game
+        game.currentPlayer = 1
     }
 
+    /**
+     * Tests successful card replacement when there are 8 cards in hand and cards in the draw stack.
+     */
     @Test
-    fun testReplaceCardsSuccessfullyUpdatesHandAndDrawStack() {
-        val currentPlayer = rootService.currentGame!!.player1
-
+    fun testReplaceCardsSuccessfully() {
+        val card :Card = (Card(CardSuit.SPADES, CardValue.SEVEN))
+        for( i in 1..8 ){game.player1.hand.add(card)}
+        game.player1.drawStack.add(0,card)
         assertDoesNotThrow {
             playerActionService.replaceCards()
         }
 
-        assertEquals(5, currentPlayer.hand.size)
-        assertEquals(5 , currentPlayer.drawStack.size)
+        assertEquals(5, game.player1.hand.size)
+        assertEquals(4 , game.player1.drawStack.size)
         assertEquals(0 , rootService.currentGame!!.passCounter)
     }
 
-    /*@Test
-    fun testReplaceCardsThrowsExceptionIfCannotReplace() {
-        val currentPlayer = rootService.currentGame!!.player2
-
-        val exception = assertThrows<IllegalArgumentException> {
+    /**
+     * Tests card replacement when the player has less than 8 cards in hand.
+     */
+    @Test
+    fun testReplaceCardsWhenHandSizeLessThan8() {
+        val card :Card = (Card(CardSuit.SPADES, CardValue.SEVEN))
+        for( i in 1..5 ){game.player1.hand.add(card)}
+        game.player1.drawStack.add(0,card)
+        val exception = assertThrows<IllegalStateException> {
             playerActionService.replaceCards()
         }
-
         assertEquals("you have less than 8 cards , you cant replace you cards", exception.message)
-    }*/
+    }
+
+    /**
+     * Tests card replacement when the draw stack is empty.
+     */
+    @Test
+    fun testReplaceCardsWhenDrawStackIsEmpty() {
+        val card :Card = (Card(CardSuit.SPADES, CardValue.SEVEN))
+        for( i in 1..8 ){game.player1.hand.add(card)}
+        val exception = assertThrows<IllegalStateException> {
+            playerActionService.replaceCards()
+        }
+        assertEquals("you draw Deck is Empty , you cant replace you cards", exception.message)
+    }
+
+    /**
+     * Tests card replacement when no game is active.
+     */
+    @Test
+    fun testReplaceCardsWhenNoGameIsActive() {
+        rootService.currentGame = null
+        assertThrows<IllegalStateException> { playerActionService.replaceCards() }
+        assertNull(rootService.currentGame)
+    }
 }

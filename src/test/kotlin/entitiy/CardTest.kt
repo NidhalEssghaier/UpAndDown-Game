@@ -16,8 +16,8 @@ import kotlin.test.assertEquals
  */
 
 class CardTest {
-    val exampleCard1 = Card(CardSuit.HEARTS, CardValue.TEN) //♥10
-    val exampleCard2 = Card(CardSuit.HEARTS, CardValue.JACK) // ♥J
+    private val exampleCard1 = Card(CardSuit.HEARTS, CardValue.TEN) //♥10
+    private val exampleCard2 = Card(CardSuit.HEARTS, CardValue.JACK) // ♥J
 
 
     /**
@@ -25,7 +25,7 @@ class CardTest {
      */
 
     @Test
-    fun comparecards() {
+    fun compareCards() {
 
         assertNotEquals(
             exampleCard1.value.ordinal, exampleCard2.value.ordinal,
@@ -40,7 +40,7 @@ class CardTest {
      * Ensures that the correct suit and value are returned as a string.
      */
     @Test
-    fun CardSuitAndValueTest() {
+    fun cardSuitAndValueTest() {
 
         assertEquals(
             expected = "♥10",

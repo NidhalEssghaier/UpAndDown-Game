@@ -1,118 +1,102 @@
 package service
 
-import entity.Card
-import entity.CardSuit
-import entity.CardValue
+import entity.*
+import org.junit.jupiter.api.Assertions.assertNull
 import kotlin.test.assertFails
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
+import kotlin.test.assertEquals
 
 
 
+/**
+ * Test class for the pass action
+ */
 class PassTest {
 
     private lateinit var rootService: RootService
-    private lateinit var gameService: GameService
     private lateinit var playerActionService: PlayerActionService
+    private lateinit var game: UpAndDownGame
 
+    /**
+     * Initializes game and services before each test.
+     */
     @BeforeEach
     fun setUp() {
         rootService = RootService()
-        gameService = GameService(rootService)
-        playerActionService = PlayerActionService(rootService)
+        playerActionService = rootService.playerActionService
+        game = UpAndDownGame(Player("player1"), Player("player2"))
+        game.currentPlayer = 1
+        rootService.currentGame = game
     }
 
+    /**
+     * Verifies that a valid pass works and updates the pass counter and current player.
+     */
     @Test
-    fun passValidTest(){
-
-        val name1 = "Player1"
-        val name2 = "Player2"
-        gameService.startNewGame(name1, name2)
-
-        val game = rootService.currentGame
-        checkNotNull(game)
-
-        val currentPlayer = if (game.currentPlayer==1) game.player1 else game.player2
-        currentPlayer.hand.clear()
-        val sublist = listOf(
-            Card(CardSuit.HEARTS, CardValue.FIVE),
-            Card(CardSuit.HEARTS, CardValue.FOUR),
-            Card(CardSuit.CLUBS, CardValue.FIVE),
-            Card(CardSuit.HEARTS, CardValue.FOUR)
-        )
-        currentPlayer.hand.addAll(sublist)
-        currentPlayer.drawStack.clear()
-        game.playStack1.add(Card(CardSuit.HEARTS, CardValue.KING))
-        game.playStack1.add(Card(CardSuit.HEARTS, CardValue.KING))
-
+    fun passValidTest() {
+        val handCard = Card(CardSuit.SPADES, CardValue.SEVEN)
+        game.player1.hand.add(handCard)
+        game.playStack1.add(Card(CardSuit.CLUBS, CardValue.SEVEN))
+        game.playStack2.add(Card(CardSuit.HEARTS, CardValue.SEVEN))
         rootService.playerActionService.pass()
-        assert(game.passCounter==1)
+
+        assert(game.passCounter == 1)
+        assertEquals(game.currentPlayer, 2)
     }
+
+    /**
+     * Ensures pass fails if the player can still play a valid card.
+     */
     @Test
-    fun passAndCanPlayCardTest(){
-        val name1 = "Player1"
-        val name2 = "Player2"
-        gameService.startNewGame(name1, name2)
+    fun passAndCanPlayCardTest() {
+        val handCard = Card(CardSuit.SPADES, CardValue.SEVEN)
+        game.player1.hand.add(handCard)
+        game.playStack1.add(Card(CardSuit.HEARTS, CardValue.SIX))
+        game.playStack2.add(Card(CardSuit.CLUBS, CardValue.KING))
 
-        val game = rootService.currentGame
-        checkNotNull(game)
+        assertFails { rootService.playerActionService.pass() }
 
-        val currentPlayer = if (game.currentPlayer==0) game.player1 else game.player2
-        currentPlayer.hand.clear()
-        val sublist = listOf(
-            Card(CardSuit.HEARTS, CardValue.NINE),
-            Card(CardSuit.HEARTS, CardValue.FOUR),
-            Card(CardSuit.CLUBS, CardValue.FIVE),
-            Card(CardSuit.HEARTS, CardValue.FOUR)
-        )
-        game.playStack1.add(Card(CardSuit.HEARTS, CardValue.TEN))
-        currentPlayer.drawStack.clear()
-        assertFails {rootService.playerActionService.pass()}
+        game.playStack1.add(Card(CardSuit.HEARTS, CardValue.KING))
+        game.playStack2.add(Card(CardSuit.CLUBS, CardValue.SIX))
+        assertFails { rootService.playerActionService.pass() }
     }
+
+    /**
+     * Verifies that pass fails if the player can  draw a card.
+     */
     @Test
-    fun passAndCanDrawCardTest(){
-        val name1 = "Player1"
-        val name2 = "Player2"
-        gameService.startNewGame(name1, name2)
+    fun passAndCanDrawCardTest() {
+        game.player1.hand.clear()
+        val card = Card(CardSuit.HEARTS, CardValue.SEVEN)
+        game.player1.drawStack.add(card)
 
-        val game = rootService.currentGame
-        checkNotNull(game)
-
-        val currentPlayer = if (game.currentPlayer==0) game.player1 else game.player2
-        currentPlayer.hand.clear()
-        val sublist = listOf(
-            Card(CardSuit.HEARTS, CardValue.EIGHT),
-            Card(CardSuit.HEARTS, CardValue.FOUR),
-            Card(CardSuit.CLUBS, CardValue.FIVE),
-            Card(CardSuit.HEARTS, CardValue.FOUR)
-        )
-        currentPlayer.hand.addAll(sublist)
-        assertFails {rootService.playerActionService.pass()}
+        assertFails { rootService.playerActionService.pass() }
     }
+
+    /**
+     * Ensures that pass fails when the player can replace cards.
+     */
     @Test
-    fun passAndCanRedrawHand(){
-        val name1 = "Player1"
-        val name2 = "Player2"
-        gameService.startNewGame(name1, name2)
+    fun passAndCanReplaceCardsTest() {
+        game.player1.hand.clear()
+        val card = Card(CardSuit.SPADES, CardValue.SEVEN)
+        repeat(10) { game.player1.hand.add(card) }
+        game.player1.drawStack.add(card)
 
-        val game = rootService.currentGame
-        checkNotNull(game)
-        val currentPlayer = if (game.currentPlayer==0) game.player1 else game.player2
-        currentPlayer.hand.clear()
-        val sublist = listOf(
-            Card(CardSuit.DIAMONDS, CardValue.SEVEN),
-            Card(CardSuit.CLUBS, CardValue.EIGHT),
-            Card(CardSuit.CLUBS, CardValue.NINE),
-            Card(CardSuit.HEARTS, CardValue.KING),
-            Card(CardSuit.DIAMONDS, CardValue.QUEEN),
-            Card(CardSuit.HEARTS, CardValue.EIGHT),
-            Card(CardSuit.HEARTS, CardValue.FOUR),
-            Card(CardSuit.CLUBS, CardValue.FIVE),
-            Card(CardSuit.HEARTS, CardValue.FOUR),
-            Card(CardSuit.HEARTS, CardValue.THREE)
-        )
-        currentPlayer.hand.addAll(sublist)
-        assertFails {rootService.playerActionService.pass()}
+        assertFails { rootService.playerActionService.pass() }
+    }
 
+    /**
+     * Verifies that pass fails when no game is active.
+     */
+    @Test
+    fun passWhenNoGameIsActive() {
+        rootService.currentGame = null
+
+        assertFails { rootService.playerActionService.pass() }
+        assertThrows<IllegalStateException> { playerActionService.pass() }
+        assertNull(rootService.currentGame)
     }
 }

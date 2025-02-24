@@ -4,91 +4,90 @@ import entity.Card
 import entity.CardSuit
 import entity.CardValue
 import entity.Player
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertDoesNotThrow
+import org.junit.jupiter.api.*
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertNull
 import kotlin.test.assertFails
 import kotlin.test.assertEquals
-
+import kotlin.test.assertTrue
 class DrawCardTest {
 
     private lateinit var rootService: RootService
     private lateinit var gameService: GameService
     private lateinit var playerActionService: PlayerActionService
+    private lateinit var game: UpAndDownGame
 
+
+    /**
+     *  initialize [RootService] and [GameService] and [playerActionService] before each Test
+     *  initialize an [UpAndDownGame] before each Test
+     *  set Current Player to 1
+     */
     @BeforeEach
     fun setUp() {
         rootService = RootService()
         gameService = GameService(rootService)
-        playerActionService = PlayerActionService(rootService)
-
-        // Initialize players and their draw stacks.
-        val player1 = Player(name = "Player 1").apply {
-            drawStack.add(Card(CardSuit.HEARTS, CardValue.ACE)) // Beispielkarte zum Ziehen.
-            drawStack.add(Card(CardSuit.DIAMONDS, CardValue.TWO))
-            drawStack.add(Card(CardSuit.CLUBS, CardValue.THREE))
-        }
-
-        val player2 = Player(name = "Player 2").apply {
-            drawStack.add(Card(CardSuit.SPADES, CardValue.FOUR)) // Beispielkarte zum Ziehen.
-        }
-
-        // Create a new UpAndDownGame instance and set it in root service.
-        val game = UpAndDownGame(player1, player2)
-
-        rootService.currentGame = game
-
-        // Set current player to Player 1.
+        playerActionService = rootService.playerActionService
+        game = UpAndDownGame(Player("player1"), Player("player2"))
         game.currentPlayer = 1
+        rootService.currentGame = game
     }
 
+    /**
+     * Tests whether drawing a card successfully adds the card to the player's hand.
+     */
     @Test
     fun testDrawCardSuccessfullyAddsCardToHand() {
-        val currentGame = rootService.currentGame ?: throw IllegalStateException("No current game.")
-
-        assertEquals(0, currentGame.player1.hand.size)
+        val cardToDraw: Card = (Card(CardSuit.HEARTS, CardValue.ACE))
+        game.player1.drawStack.add(0, cardToDraw)
+        assertEquals(0, game.player1.hand.size)
 
         assertDoesNotThrow {
             playerActionService.drawCard()
         }
 
-        assertEquals(1, currentGame.player1.hand.size)
-        assertEquals(2, currentGame.player1.drawStack.size)
-        assertEquals(0, currentGame.passCounter)
+        assertEquals(1, game.player1.hand.size)
+        assertEquals(0, game.player1.drawStack.size)
+        assertEquals(0, game.passCounter)
+        assertTrue(game.player1.hand.contains(cardToDraw))
+        assertFalse(game.player1.drawStack.contains(cardToDraw))
     }
 
-
-
+    /**
+     * Tests drawing a card from an empty deck
+     */
     @Test
-        /**
-         * Test for invalid action when trying to draw a card from an empty deck.
-         * This test verifies that the drawCard action fails when there is no card to draw.
-         */
-   fun testInvalidDrawDeckAction1() {
-     val rootService = RootService()
-     val game = UpAndDownGame(
-        player1 = Player("Player1"),
-        player2 = Player("Player2")
-      )
+    fun testDrawCardWhileDeckEmpty() {
+        val exception = assertThrows<IllegalStateException> { playerActionService.drawCard() }
+        assertEquals("you dont have any cards left to draw", exception.message)
+        assertFails { playerActionService.drawCard() }
+    }
 
-      rootService.currentGame = game
-      assertFails{rootService.playerActionService.drawCard()}
-   }
-
-       /**
-         * Test for invalid action when a player exceeds the draw limit.
-         * This test checks that a player cannot draw more than the allowed number of cards.*/
-     @Test fun testInvalidDrawDeckAction() {
-
-           val name1 = "Player1"
-           val name2 = "Player2"
-           gameService.startNewGame(name1, name2)
-           val game = rootService.currentGame
-           kotlin.test.assertNotNull(game)
-
-           for( i in 1..10 ){
-            rootService.playerActionService.drawCard()
+    /**
+     * Tests an invalid draw action when the player's hand already has more than 9 cards.
+     */
+    @Test
+    fun testInvalidDrawDeckAction() {
+        val card: Card = (Card(CardSuit.SPADES, CardValue.SEVEN))
+        game.player1.drawStack.add(0, card)
+        for (i in 1..10) {
+            game.player1.hand.add(card)
         }
-        assertFails{ rootService.playerActionService.drawCard()}
-     }
+        val exception = assertThrows<IllegalStateException> { playerActionService.drawCard() }
+        assertEquals(
+            "you can´t draw cards ! you have more than 9 card , please replace you cards",
+            exception.message
+        )
+        assertFails { playerActionService.drawCard() }
+    }
+
+    /**
+     * Tests drawing a card when there is no active game
+     */
+    @Test
+    fun testDrawCardWhenNoGameIsActive() {
+        rootService.currentGame = null
+        assertThrows<IllegalStateException> { playerActionService.drawCard() }
+        assertNull(rootService.currentGame)
+    }
 }
