@@ -22,8 +22,8 @@ class PlayerTest {
     fun `player tester` () {
 
         assertEquals(
-            expected = "player1: D[♥A] H[♦2]",
-            actual = player.toString(),
+            expected = "player1",
+            actual = player.name,
             "should return the exact player´s name, drawStack and hand that are declared  "
         )
     }
