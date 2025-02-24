@@ -1,7 +1,7 @@
 package gui
 
 import tools.aqua.bgw.core.BoardGameApplication
-
+/** Sopra Apllication**/
 class SopraApplication : BoardGameApplication("SoPra Game") {
 
    private val helloScene = HelloScene()

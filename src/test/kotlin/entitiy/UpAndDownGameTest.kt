@@ -4,8 +4,8 @@ import entity.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-/**
- * UpAndDown game Test
+ /**
+ * test UpAndDown Game
  */
 class UpAndDownGameTest {
 

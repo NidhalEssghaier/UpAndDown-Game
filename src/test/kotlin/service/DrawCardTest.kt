@@ -12,7 +12,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 /**
- * DrawCard Test with different scenarios
+ * Draw card  Test with different scenarios
  */
 class DrawCardTest {
 
