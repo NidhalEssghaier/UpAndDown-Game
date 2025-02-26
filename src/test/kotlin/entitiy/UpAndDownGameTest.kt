@@ -12,7 +12,7 @@ class UpAndDownGameTest {
     private val player1=Player("Test1")
     private val player2=Player("Test2")
     private val upAndDownGame = UpAndDownGame(player1,player2)
-    private var examplePassCounter = upAndDownGame.passCounter
+    private val examplePassCounter = upAndDownGame.passCounter
 
 
     /**

@@ -25,9 +25,9 @@ class GameService(private val rootService: RootService) : AbstractRefreshingServ
         distributeHandAndDrawCards(player1, player2, allCards)
 
         val game = UpAndDownGame(player1, player2).apply {
-            currentPlayer = startingPlayer
             playStack1.add(allCards.removeAt(0))
             playStack2.add(allCards.removeAt(0))
+            currentPlayer = startingPlayer
             passCounter = 0
         }
         rootService.currentGame = game
@@ -82,7 +82,7 @@ class GameService(private val rootService: RootService) : AbstractRefreshingServ
 
         game.currentPlayer = if (game.currentPlayer == 1) 2 else 1
         val nextPlayer :Player = if (game.currentPlayer == 1) game.player2 else game.player1
-        onAllRefreshables{(refreshAfterEndTurn("${nextPlayer.name} wins the game!"))}
+        onAllRefreshables{(refreshAfterEndTurn("${nextPlayer.name} Its you turn!"))}
     }
 
     /**

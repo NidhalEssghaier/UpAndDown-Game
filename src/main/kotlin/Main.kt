@@ -1,7 +1,7 @@
-import gui.SopraApplication
+import gui.UpAndDownApplication
 /**main**/
 fun main() {
 
-    SopraApplication().show()
+    UpAndDownApplication().show()
     println("Application ended. Goodbye")
 }
