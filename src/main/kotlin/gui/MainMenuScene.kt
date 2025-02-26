@@ -15,6 +15,20 @@ import service.RootService
  */
 class MainMenuScene(private val rootService: RootService) : MenuScene(400, 1080), Refreshable {
 
+    private val startButton = Button(
+        width = 140, height = 35,
+        posX = 360, posY = 240,
+        text = "Start"
+    ).apply {
+        visual = ColorVisual(136, 221, 136)
+        onMouseClicked = {
+            rootService.gameService.startNewGame(
+                p1Input.text.trim(),
+                p2Input.text.trim()
+            )
+        }
+    }
+
     private val headlineLabel = Label(
         width = 300, height = 50, posX = 200, posY = 50,
         text = "Start New Game",
@@ -57,7 +71,7 @@ class MainMenuScene(private val rootService: RootService) : MenuScene(400, 1080)
         }
     }
 
-    val quitButton = Button(
+    private val quitButton = Button(
         width = 140, height = 35,
         posX = 200, posY = 240,
         text = "Quit"
@@ -66,19 +80,7 @@ class MainMenuScene(private val rootService: RootService) : MenuScene(400, 1080)
         onMouseClicked = { rootService.gameService.exitGame() }
     }
 
-    private val startButton = Button(
-        width = 140, height = 35,
-        posX = 360, posY = 240,
-        text = "Start"
-    ).apply {
-        visual = ColorVisual(136, 221, 136)
-        onMouseClicked = {
-            rootService.gameService.startNewGame(
-                p1Input.text.trim(),
-                p2Input.text.trim()
-            )
-        }
-    }
+
 
     init {
         opacity = .5
