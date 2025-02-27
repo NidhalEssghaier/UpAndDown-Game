@@ -16,6 +16,41 @@ import service.RootService
  */
 class MainMenuScene(private val rootService: RootService) : MenuScene(400, 600), Refreshable {
 
+    private val p1Input: TextField = TextField(
+        width = 200, height = 35,
+        posX = 150, posY = 120,
+        text = listOf("Homer", "Marge", "Bart", "Lisa", "papay").random()
+    ).apply {
+        onKeyTyped = {
+            startButton.isDisabled = this.text.isBlank() || p2Input.text.isBlank()
+        }
+    }
+
+    private val p2Input: TextField = TextField(
+        width = 200, height = 35,
+        posX = 150, posY = 180,
+        text = listOf("Fry", "Bender", "Zaytouna", "Amy", "Zitoun").random()
+    ).apply {
+        onKeyTyped = {
+            startButton.isDisabled = p1Input.text.isBlank() || this.text.isBlank()
+        }
+    }
+
+    private val p1Label = Label(
+        width = 100, height = 35,
+        posX = 50, posY = 120,
+        text = "Player 1:",
+        font = Font(size = 18)
+    )
+
+    private val p2Label = Label(
+        width = 100, height = 35,
+        posX = 50, posY = 180,
+        text = "Player 2:",
+        font = Font(size = 18)
+    )
+
+
     private val headlineLabel = Label(
         width = 300, height = 50, posX = 50, posY = 30,
         text = "Start New Game",
@@ -48,47 +83,12 @@ class MainMenuScene(private val rootService: RootService) : MenuScene(400, 600),
         onMouseClicked = { rootService.gameService.exitGame() }
     }
 
-    private val p2Label = Label(
-        width = 100, height = 35,
-        posX = 50, posY = 180,
-        text = "Player 2:",
-        font = Font(size = 18)
-    )
-
-    private val p2Input: TextField = TextField(
-        width = 200, height = 35,
-        posX = 150, posY = 180,
-        text = listOf("Fry", "Bender", "Zaytouna", "Amy", "Zitoun").random()
-    ).apply {
-        onKeyTyped = {
-            startButton.isDisabled = p1Input.text.isBlank() || this.text.isBlank()
-        }
-    }
-
-    private val p1Label = Label(
-        width = 100, height = 35,
-        posX = 50, posY = 120,
-        text = "Player 1:",
-        font = Font(size = 18)
-    )
-
-    private val p1Input: TextField = TextField(
-        width = 200, height = 35,
-        posX = 150, posY = 120,
-        text = listOf("Homer", "Marge", "Bart", "Lisa", "papay").random()
-    ).apply {
-        onKeyTyped = {
-            startButton.isDisabled = this.text.isBlank() || p2Input.text.isBlank()
-        }
-    }
-
-
     /**
      * Initializes the scene
      */
     init {
         opacity = 0.8
-        background = ColorVisual(240, 240, 240) // Light gray background
+        background = ColorVisual(240, 240, 240)
         addComponents(
             headlineLabel,
             p1Label, p1Input,

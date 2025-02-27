@@ -21,10 +21,9 @@ class NextPlayerScene(
     /**
      * The current player whose turn is about to start.
      */
-    private val currentPLayer: Player = if (rootService.currentGame!!.currentPlayer == 1)
-        rootService.currentGame!!.player1
-    else
-        rootService.currentGame!!.player2
+    private val currentPLayer: Player = rootService.currentGame?.let { game ->
+        if (game.currentPlayer == 1) game.player1 else game.player2
+    } ?: throw IllegalStateException(" No Game started!")
 
     /**
      * Label displaying the name of the next player.
