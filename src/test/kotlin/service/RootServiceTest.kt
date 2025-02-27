@@ -28,3 +28,5 @@ class RootServiceTest {
         assertDoesNotThrow { rootService.addRefreshables(testRefreshable1, testRefreshable2) }
     }
 }
+
+
