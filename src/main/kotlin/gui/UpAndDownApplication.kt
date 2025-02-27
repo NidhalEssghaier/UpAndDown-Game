@@ -39,13 +39,12 @@ class UpAndDownApplication : BoardGameApplication("Up And Down"), Refreshable {
     override fun refreshAfterStartNewGame() {
         val nextPlayerScene = NextPlayerScene(rootService)
         this.showMenuScene(nextPlayerScene)
-        this.hideMenuScene()
-
     }
 
     override fun refreshAfterEndGame(resultMessage: String) {
         val resultMenuScene = ResultMenuScene(rootService, resultMessage)
-        this.showMenuScene(mainMenuScene)
+        this.showMenuScene(resultMenuScene)
+        //this.showMenuScene(mainMenuScene)
     }
 
     override fun refreshAfterExitGame() {

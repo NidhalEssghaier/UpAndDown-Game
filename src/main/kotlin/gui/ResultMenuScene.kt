@@ -24,7 +24,7 @@ class ResultMenuScene
 
     private val gameResult = Label(width = 550, height = 55, posX = 50, posY = 160 , text= resultMessage)
 
-    val mainMenuButton =
+    private val mainMenuButton =
         Button(width = 250, height = 40, posX = 200, posY = 225, text = "Return to main menu", font = Font(size = 23),
         ).apply {
             visual = ColorVisual(66, 150, 131).apply { style.borderRadius = BorderRadius.MEDIUM }

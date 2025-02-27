@@ -92,7 +92,6 @@ class TestRefreshable: Refreshable {
         refreshAfterPlayCardCalled = true
     }
 
-
     override fun refreshAfterExitGame() {
         refreshAfterExitGameCalled = true
     }

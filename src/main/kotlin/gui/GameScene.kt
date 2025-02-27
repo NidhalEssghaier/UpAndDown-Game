@@ -13,6 +13,8 @@ import tools.aqua.bgw.visual.ColorVisual
 import tools.aqua.bgw.components.uicomponents.Button
 import tools.aqua.bgw.components.uicomponents.Label
 import tools.aqua.bgw.components.gamecomponentviews.CardView
+import tools.aqua.bgw.core.Color
+import tools.aqua.bgw.style.BorderRadius
 import tools.aqua.bgw.visual.ImageVisual
 
 
@@ -33,32 +35,40 @@ class GameScene(
         text = "Pass Turn",
         font = Font(size = 26, fontWeight = Font.FontWeight.BOLD)
     ).apply {
-        visual = ColorVisual(220, 53, 69)
+        visual = ColorVisual(225, 153, 153).apply { style.borderRadius = BorderRadius.MEDIUM }
+        onMouseEntered = { visual = ColorVisual(253, 72, 72) }
+        onMouseExited = { visual = ColorVisual(225, 153, 153) }
         onMouseClicked = { rootService.playerActionService.pass() }
     }
 
 
     private val drawButton = Button(
-        width = 350,
-        height = 350,
+        width = 112,
+        height = 34,
         posX = 340,
         posY = 200,
-        text = "Draw Card",
-        font = Font(size = 24, fontWeight = Font.FontWeight.BOLD)
+        text = "Draw",
+        font = Font(size = 20, fontWeight = Font.FontWeight.BOLD)
     ).apply {
-        visual = ColorVisual(255, 0, 0)
+        visual = ColorVisual(141, 235, 188).apply { style.borderRadius = BorderRadius.MEDIUM }
+
+        onMouseEntered = { visual = ColorVisual(36, 139, 88) }
+        onMouseExited = { visual = ColorVisual(46, 125, 50) }
         onMouseClicked = { rootService.playerActionService.drawCard() }
     }
 
     private val replaceButton = Button(
-        width = 200,
-        height = 200,
+        width = 112,
+        height = 34,
         posX = 400,
         posY = 820,
-        text = "Replace Cards",
-        font = Font(size = 24, fontWeight = Font.FontWeight.BOLD)
+        text = "Replace",
+        font = Font(size = 20, fontWeight = Font.FontWeight.BOLD)
     ).apply {
-        visual = ColorVisual(255, 193, 7)
+        visual = ColorVisual(255, 255, 189).apply { style.borderRadius = BorderRadius.MEDIUM }
+        //cornerRadius = 15.0
+        onMouseEntered = { visual = ColorVisual(182, 182, 81) }
+        onMouseExited = { visual = ColorVisual(255, 193, 7) }
         onMouseClicked = { rootService.playerActionService.replaceCards() }
     }
 
@@ -83,10 +93,11 @@ class GameScene(
 
     // Spieler 1 (unten)
     private val player1Name = Label(
-        posX = 600, posY = 1010, width = 400, height = 60,
-        font = Font(size = 28, fontWeight = Font.FontWeight.BOLD)
+        posX = 720, posY = 1000, width = 500, height = 60,
+        font = Font(size = 28, fontWeight = Font.FontWeight.BOLD, color = Color.WHITE)
     ).apply {
-        visual = ColorVisual(52, 152, 219)
+        visual = ColorVisual(0, 153, 76,1).apply { style.borderRadius = BorderRadius.MEDIUM }
+
     }
     private val player1Hand = HandDeckView(posX = 620, posY = 780)
     private val player1DrawStack = LabeledStackView(
@@ -95,11 +106,14 @@ class GameScene(
 
     // Spieler 2 (oben)
     private val player2Name = Label(
-        posX = 600, posY = 20, width = 400, height = 60,
-        font = Font(size = 28, fontWeight = Font.FontWeight.BOLD)
-    ).apply { visual = ColorVisual(231, 76, 60) }
+        posX = 720, posY = 20, width = 500, height = 60,
+        font = Font(size = 28, fontWeight = Font.FontWeight.BOLD, color = Color.WHITE)
+    ).apply { visual = ColorVisual(255, 255, 255,0.01).apply {
+        style.borderRadius = BorderRadius.MEDIUM }
+    }
 
-    private val player2Hand = HandDeckView(posX = 400, posY = 100).apply { rotation = 180.0 }
+    // Spieler 2 (oben)
+    private val player2Hand = HandDeckView(posX = 400, posY = 100)//.apply { rotation = 180.0 }
 
     private val player2DrawStack = LabeledStackView(
         posX = 1290, posY = 100, "Draw stack", true
@@ -112,7 +126,7 @@ class GameScene(
         visual = ColorVisual(39, 174, 96)
         onMouseClicked = {
             clickedPlayStack = rootService.currentGame?.playStack1
-            PlayingACard()
+            playingACard()
         }
     }
 
@@ -122,7 +136,7 @@ class GameScene(
         visual = ColorVisual(39, 174, 96)
         onMouseClicked = {
             clickedPlayStack = rootService.currentGame?.playStack2
-            PlayingACard()
+            playingACard()
         }
     }
 
@@ -137,7 +151,7 @@ class GameScene(
     // initialize scene with all components
     init {
         // dark green for "Casino table" flair
-        background = ImageVisual("poker_tisch.png")
+        background = ImageVisual("poker_table.jpg")
 
         addComponents(
             passButton,
@@ -192,7 +206,7 @@ class GameScene(
         val cardImageLoader = CardImageLoader()
 
         if (playStack == game.playStack2) {
-            initialStackView(game.playStack2, playStack2, cardImageLoader, true,)
+            initialStackView(game.playStack2, playStack2, cardImageLoader, true)
         } else {
             initialStackView(game.playStack1, playStack1, cardImageLoader, true)
         }
@@ -202,7 +216,6 @@ class GameScene(
         this.lock()
         Thread.sleep(1380)
 
-        rootService.gameService.endTurn()
     }
 
     /**
@@ -222,7 +235,6 @@ class GameScene(
         this.lock()
         Thread.sleep(1610)
 
-        rootService.gameService.endTurn()
     }
 
     /** Updates the stack view and hand view to display the correct cards */
@@ -242,7 +254,6 @@ class GameScene(
         this.lock()
         Thread.sleep(1610)
 
-        rootService.gameService.endTurn()
     }
 
 
@@ -261,9 +272,8 @@ class GameScene(
         initialStackView(game.playStack2, playStack2, cardImageLoader, true)
 
         moveDrawButtonAccordingly(game.currentPlayer)
+        clickedCard = null
 
-        clickedCard = null
-        clickedCard = null
     }
 
 
@@ -276,6 +286,8 @@ class GameScene(
         showCards: Boolean = false,
     ) {
         handView.clear()
+
+
 
         hand.forEach { card ->
             val cardView = CardView(
@@ -309,7 +321,7 @@ class GameScene(
                     clickedCard = card
                     clickedCardElement = this
 
-                    PlayingACard()
+                    playingACard()
 
                     playAnimation(
                         MovementAnimation(
@@ -395,7 +407,7 @@ class GameScene(
         }
     }
 
-    private fun PlayingACard() {
+    private fun playingACard() {
         val card = clickedCard
         val playStack = clickedPlayStack
         if (card != null && playStack != null) {
@@ -425,25 +437,29 @@ class GameScene(
     private fun moveDrawButtonAccordingly(position: Int) {
         if (position == 2) {
             drawButton.apply {
-                posX = 1300.0
-                posY = 225.0
+                posX = player2DrawStack.posX + 10
+                posY = player2DrawStack.posY + 10
+                //bringToFront()
             }
             replaceButton.apply {
-                posX = 1300.0
-                posY = 150.0
+                posX = player2DrawStack.posX + 10
+                posY = player2DrawStack.posY + 130
             }
 
         } else {
             drawButton.apply {
-                posX = 400.0
-                posY = 745.0
+                posX = player1DrawStack.posX + 10
+                posY = player1DrawStack.posY + 10
             }
             replaceButton.apply {
-                posX = 410.0
-                posY = 820.0
+                posX = player1DrawStack.posX + 10
+                posY = player1DrawStack.posY + 130
             }
 
         }
+        // Buttons entfernen und neu hinzufügen, damit sie nach vorne kommen
+        removeComponents(drawButton, replaceButton)
+        addComponents(drawButton, replaceButton)
     }
 
 
@@ -469,7 +485,7 @@ class GameScene(
                     componentView = this,
                     byAngle = 0.0,
                     duration = 0,
-                ),
+                )
             )
         }
     }

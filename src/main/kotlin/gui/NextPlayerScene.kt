@@ -8,23 +8,38 @@ import service.RootService
 import tools.aqua.bgw.util.Font
 import tools.aqua.bgw.visual.ColorVisual
 
-
+/**
+ * A scene that displays a transition screen for the next player before their turn starts.
+ * This scene provides a confirmation button to proceed to the next turn.
+ *
+ * @param rootService The central service that manages the game state.
+ */
 class NextPlayerScene(
     private val rootService: RootService
 ) : MenuScene(700, 394), Refreshable {
 
-    val currentPLayer:Player = if (rootService.currentGame!!.currentPlayer==1) rootService.currentGame!!.player2
-    else rootService.currentGame!!.player1
+    /**
+     * The current player whose turn is about to start.
+     */
+    private val currentPLayer: Player = if (rootService.currentGame!!.currentPlayer == 1)
+        rootService.currentGame!!.player1
+    else
+        rootService.currentGame!!.player2
+
+    /**
+     * Label displaying the name of the next player.
+     */
     private val playerNameLabel = Label(
         width = 400, height = 60, posX = 150, posY = 90,
         text = " ${currentPLayer.name}! ",
         font = Font(size = 36, fontWeight = Font.FontWeight.BOLD)
-     ).apply {
+    ).apply {
         visual = ColorVisual(255, 215, 0)
-     }
+    }
 
-
-
+    /**
+     * Confirmation button that starts the next player's turn.
+     */
     private val confirmButton = Button(
         width = 350, height = 60, posX = 175, posY = 250,
         text = " Let's go!",
@@ -36,6 +51,9 @@ class NextPlayerScene(
         }
     }
 
+    /**
+     * Label displaying a message to prepare the next player.
+     */
     private val messageLabel = Label(
         width = 400, height = 50, posX = 150, posY = 160,
         text = "Get ready for your turn!",
@@ -44,6 +62,9 @@ class NextPlayerScene(
         visual = ColorVisual(255, 255, 255)
     }
 
+    /**
+     * Initializes the scene
+     */
     init {
         opacity = 0.85
         background = ColorVisual(44, 62, 80)
