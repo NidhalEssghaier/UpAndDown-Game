@@ -209,7 +209,7 @@ class GameScene(
         initialHandView(game.player1.hand, player1Hand, cardImageLoader, game.currentPlayer == 1)
         initialHandView(game.player2.hand, player2Hand, cardImageLoader, game.currentPlayer == 2)
         this.lock()
-        Thread.sleep(1550)
+        Thread.sleep(1200)
 
     }
 

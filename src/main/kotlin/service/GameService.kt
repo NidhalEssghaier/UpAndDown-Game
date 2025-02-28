@@ -51,7 +51,7 @@ class GameService(private val rootService: RootService) : AbstractRefreshingServ
         val waitingPlayer = if (game.currentPlayer == 1) game.player2 else game.player1
 
         if (activePlayer.drawStack.isEmpty() && activePlayer.hand.isEmpty()) {
-            onAllRefreshables {  refreshAfterEndGame("${waitingPlayer.name} wins the game!")}
+            onAllRefreshables {  refreshAfterEndGame("${activePlayer.name} wins the game!")}
             rootService.currentGame = null
             return
         }
