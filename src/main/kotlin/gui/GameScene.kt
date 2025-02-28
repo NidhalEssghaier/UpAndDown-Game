@@ -13,7 +13,6 @@ import tools.aqua.bgw.visual.ColorVisual
 import tools.aqua.bgw.components.uicomponents.Button
 import tools.aqua.bgw.components.uicomponents.Label
 import tools.aqua.bgw.components.gamecomponentviews.CardView
-import tools.aqua.bgw.core.Color
 import tools.aqua.bgw.style.BorderRadius
 import tools.aqua.bgw.visual.ImageVisual
 
@@ -45,7 +44,7 @@ class GameScene(
     private val drawButton = Button(
         width = 112,
         height = 34,
-        posX = 340,
+        posX = 130,
         posY = 200,
         text = "Draw",
         font = Font(size = 20, fontWeight = Font.FontWeight.BOLD)
@@ -60,7 +59,7 @@ class GameScene(
     private val replaceButton = Button(
         width = 112,
         height = 34,
-        posX = 400,
+        posX = 190,
         posY = 820,
         text = "Replace",
         font = Font(size = 20, fontWeight = Font.FontWeight.BOLD)
@@ -93,30 +92,26 @@ class GameScene(
 
     // Spieler 1 (unten)
     private val player1Name = Label(
-        posX = 720, posY = 1000, width = 500, height = 60,
-        font = Font(size = 28, fontWeight = Font.FontWeight.BOLD, color = Color.WHITE)
-    ).apply {
-        visual = ColorVisual(0, 153, 76,1).apply { style.borderRadius = BorderRadius.MEDIUM }
+        posX = 125, posY = 1000, width = 250, height = 60,
 
-    }
-    private val player1Hand = HandDeckView(posX = 620, posY = 780)
+    )
+
+
+    private val player1Hand = HandDeckView(posX = 590, posY = 780)
     private val player1DrawStack = LabeledStackView(
-        posX = 400, posY = 780, "Draw Stack"
+        posX = 190, posY = 780, "Draw Stack"
     ).apply { visual = ColorVisual(41, 128, 185) }
 
     // Spieler 2 (oben)
     private val player2Name = Label(
-        posX = 720, posY = 20, width = 500, height = 60,
-        font = Font(size = 28, fontWeight = Font.FontWeight.BOLD, color = Color.WHITE)
-    ).apply { visual = ColorVisual(255, 255, 255,0.01).apply {
-        style.borderRadius = BorderRadius.MEDIUM }
-    }
+        posX = 1530, posY = 20, width = 250, height = 60,
+    )
 
     // Spieler 2 (oben)
-    private val player2Hand = HandDeckView(posX = 400, posY = 100)//.apply { rotation = 180.0 }
+    private val player2Hand = HandDeckView(posX = 540, posY = 100)//.apply { rotation = 180.0 }
 
     private val player2DrawStack = LabeledStackView(
-        posX = 1290, posY = 100, "Draw stack", true
+        posX = 1590, posY = 100, "Draw stack", true
     ).apply { visual = ColorVisual(192, 57, 43) }
 
     // Play Stacks in der Mitte
@@ -214,7 +209,7 @@ class GameScene(
         initialHandView(game.player1.hand, player1Hand, cardImageLoader, game.currentPlayer == 1)
         initialHandView(game.player2.hand, player2Hand, cardImageLoader, game.currentPlayer == 2)
         this.lock()
-        Thread.sleep(1380)
+        Thread.sleep(1550)
 
     }
 
@@ -428,9 +423,8 @@ class GameScene(
         label.font = Font(size = 30, fontWeight = Font.FontWeight.BOLD)
 
         label.apply {
-            visual = ColorVisual(0, 0, 0, 0.6)
+            visual =  ImageVisual("label_background.jpg")
 
-            opacity = 0.75
         }
     }
 

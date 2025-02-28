@@ -31,7 +31,7 @@ class CardImageLoader {
     /**
      * Provides a blank (white) card
      */
-    val blankImage : ImageVisual get() = getImageByCoordinates(0, 4)
+    private val blankImage : ImageVisual get() = getImageByCoordinates(0, 4)
 
     /**
      * Provides the back side image of the card deck
