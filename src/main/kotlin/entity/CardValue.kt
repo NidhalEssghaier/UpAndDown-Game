@@ -26,6 +26,7 @@ enum class CardValue {
     ACE,
     ;
 
+
     /**
      * provide a single character to represent this value.
      * Returns one of: 2/3/4/5/6/7/8/9/10/J/Q/K/A
