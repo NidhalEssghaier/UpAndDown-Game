@@ -11,7 +11,7 @@
 -  Rule enforcement for all game phases
 -  Winner is automatically detected and announced
 
-## 🛠️ Tech Stack
+##  Tech Stack
 
 - **Java** or **Kotlin** (let me know which one and I’ll update)
 - Built with **IntelliJ IDEA**
