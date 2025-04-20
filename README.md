@@ -1,7 +1,29 @@
-# SoPra Projekt 1 (Einzelprojekt)
+#  UpAndDown – Hotseat Card Game
 
-## Wichtige Links
+**UpAndDown** is a digital version of the classic card game designed for hotseat play on a single machine.
 
-* Aktuelle Informationen zu diesem SoPra: https://sopra.cs.tu-dortmund.de/wiki/sopra/25a/start
-* Beispielprojekt Kartenspiel War: https://sopra-gitlab.cs.tu-dortmund.de/internal/bgw-war
-* Weitere Links: https://sopra.cs.tu-dortmund.de/wiki/infos/links/
+##  Key Features
+
+-  Hotseat mode (play locally with friends)
+-  Customizable player names
+-  Automatic card dealing and hidden card management
+-  “Next player” transition screen to preserve secrecy
+-  Rule enforcement for all game phases
+-  Winner is automatically detected and announced
+
+## 🛠️ Tech Stack
+
+- **Java** or **Kotlin** (let me know which one and I’ll update)
+- Built with **IntelliJ IDEA**
+- Simple UI (optional: add if it has a GUI)
+
+##  Getting Started
+
+### Requirements
+- Java 17+ (or Kotlin equivalent)
+- IntelliJ IDEA (recommended)
+
+### Clone and Run
+
+```bash
+git clone https://github.com/NidhalEssghaier/UpAndDown.git
